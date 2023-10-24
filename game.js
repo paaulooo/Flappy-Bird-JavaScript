@@ -56,6 +56,25 @@ const ground = {
     }
 }
 
+const startScreen = {
+    SpriteX: 134,
+    SpriteY: 0,
+    Width: 174,
+    Height: 152,
+    X: (canvas.width / 2) - 174 / 2,
+    Y: 50,
+    Draw() {
+        context.drawImage(
+            sprites,
+            startScreen.SpriteX, startScreen.SpriteY, 
+            startScreen.Width, startScreen.Height, 
+            startScreen.X, startScreen.Y, 
+            startScreen.Width, startScreen.Height    
+       );
+
+    }
+}
+
 const background = {
     SpriteX: 390,
     SpriteY: 0,
@@ -84,15 +103,50 @@ const background = {
 
     }
 }
+let activeScreen = {};
+function screenChanger(newScreen){
+    activeScreen = newScreen;
+}
+const screens = {
+    start: {
+        Draw(){
+            background.Draw();
+            ground.Draw();
+            flappy.Draw();
+            startScreen.Draw();
+        },
+        click(){
+            screenChanger(screens.game)
+        },
+        Update(){
 
-function loop(){
-    background.Draw();
-    ground.Draw();
-    flappy.Draw();
-    requestAnimationFrame(loop);
-    flappy.Update();
-    
-
+        }
+    }
+};
+screens.game = {
+    Draw(){
+        background.Draw();
+        ground.Draw();
+        flappy.Draw();
+    },
+    Update(){
+        flappy.Update();
+    }
 }
 
+function loop(){
+    
+    activeScreen.Draw()
+    activeScreen.Update()
+    
+    requestAnimationFrame(loop);
+}
+
+window.addEventListener('click', function(){
+    if (activeScreen.click){
+        activeScreen.click();
+    }
+})
+
+screenChanger(screens.start)
 loop();
