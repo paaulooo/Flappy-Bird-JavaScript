@@ -1,5 +1,14 @@
 console.log('Flappy Bird!');
 
+const hitSound = new Audio();
+hitSound.src = './SFX/hit.wav';
+
+const jumpSound = new Audio();
+jumpSound.src = './SFX/jump.wav';
+
+const fallSound = new Audio();
+fallSound.src = '.SFX/falling.wav'
+
 const sprites = new Image();
 sprites.src = './sprites.png';
 
@@ -30,19 +39,25 @@ function createFlappy(){
         jumpforce: 5.3,
         jump(){
             console.log('jump')
+            jumpSound.play()
             flappy.vel = - flappy.jumpforce
         },
         Update(){
             if(docollision(flappy, ground)){
                 console.log('COLLISION')
     
-    
-                screenChanger(screens.start)
+                hitSound.play();
+                setTimeout(() => {
+                    
+                    screenChanger(screens.start)
+                }, 340)
     
                 return
             }
             flappy.vel = flappy.vel + flappy. gravity
             flappy.Y = flappy.Y + flappy.vel;
+            
+            
         },
         
         Draw() {
