@@ -13,6 +13,12 @@ const flappy = {
     Height: 24,
     X: 10,
     Y: 50,
+    vel: 0,
+    gravity: 0.2,
+    Update(){
+        flappy.vel = flappy.vel + flappy. gravity
+        flappy.Y = flappy.Y + flappy.vel;
+    },
     Draw() {
         context.drawImage(
             sprites,
@@ -50,7 +56,7 @@ const ground = {
     }
 }
 
-const backgroud = {
+const background = {
     SpriteX: 390,
     SpriteY: 0,
     Width: 275,
@@ -63,29 +69,29 @@ const backgroud = {
 
         context.drawImage(
             sprites,
-            backgroud.SpriteX, backgroud.SpriteY, 
-            backgroud.Width, backgroud.Height, 
-            backgroud.X, backgroud.Y, 
-            backgroud.Width, backgroud.Height    
+            background.SpriteX, background.SpriteY, 
+            background.Width, background.Height, 
+            background.X, background.Y, 
+            background.Width, background.Height    
        );
        context.drawImage(
         sprites,
-        backgroud.SpriteX, backgroud.SpriteY, 
-        backgroud.Width, backgroud.Height, 
-        (backgroud.X + backgroud.Width), backgroud.Y, 
-        backgroud.Width, backgroud.Height    
+        background.SpriteX, background.SpriteY, 
+        background.Width, background.Height, 
+        (background.X + background.Width), background.Y, 
+        background.Width, background.Height    
    );
 
     }
 }
 
 function loop(){
-    backgroud.Draw();
+    background.Draw();
     ground.Draw();
-    flappy.Draw()
-    requestAnimationFrame(loop)
-
-    flappy.Y = flappy.Y + 1;
+    flappy.Draw();
+    requestAnimationFrame(loop);
+    flappy.Update();
+    
 
 }
 
