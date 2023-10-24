@@ -6,30 +6,60 @@ sprites.src = './sprites.png';
 const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
 
-const flappy = {
-    SpriteX: 0,
-    SpriteY: 0,
-    Width: 33,
-    Height: 24,
-    X: 10,
-    Y: 50,
-    vel: 0,
-    gravity: 0.2,
-    Update(){
-        flappy.vel = flappy.vel + flappy. gravity
-        flappy.Y = flappy.Y + flappy.vel;
-    },
-    Draw() {
-        context.drawImage(
-            sprites,
-            flappy.SpriteX, flappy.SpriteY, 
-            flappy.Width, flappy.Height, 
-            flappy.X, flappy.Y, 
-            flappy.Width, flappy.Height    
-       );
+function docollision(flappy, ground){
+    const flappyY = flappy.Y + flappy.Height;
+    const groundY = ground.Y;
 
+    if(flappyY >= groundY){
+        return true;
     }
+
+    return false;
 }
+
+function createFlappy(){
+    const flappy = {
+        SpriteX: 0,
+        SpriteY: 0,
+        Width: 33,
+        Height: 24,
+        X: 10,
+        Y: 50,
+        vel: 0,
+        gravity: 0.2,
+        jumpforce: 5.3,
+        jump(){
+            console.log('jump')
+            flappy.vel = - flappy.jumpforce
+        },
+        Update(){
+            if(docollision(flappy, ground)){
+                console.log('COLLISION')
+    
+    
+                screenChanger(screens.start)
+    
+                return
+            }
+            flappy.vel = flappy.vel + flappy. gravity
+            flappy.Y = flappy.Y + flappy.vel;
+        },
+        
+        Draw() {
+            context.drawImage(
+                sprites,
+                flappy.SpriteX, flappy.SpriteY, 
+                flappy.Width, flappy.Height, 
+                flappy.X, flappy.Y, 
+                flappy.Width, flappy.Height    
+           );
+    
+        }
+    }
+    return flappy
+}
+
+
 const ground = {
     SpriteX: 0,
     SpriteY: 610,
@@ -103,16 +133,24 @@ const background = {
 
     }
 }
+const global = {};
 let activeScreen = {};
 function screenChanger(newScreen){
     activeScreen = newScreen;
+
+    if (activeScreen.starting){
+        activeScreen.starting();
+    }
 }
 const screens = {
     start: {
+        starting(){
+            global.flappy = createFlappy();
+        },
         Draw(){
             background.Draw();
             ground.Draw();
-            flappy.Draw();
+            global.flappy.Draw();
             startScreen.Draw();
         },
         click(){
@@ -127,10 +165,13 @@ screens.game = {
     Draw(){
         background.Draw();
         ground.Draw();
-        flappy.Draw();
+        global.flappy.Draw();
+    },
+    click(){
+        global.flappy.jump()
     },
     Update(){
-        flappy.Update();
+        global.flappy.Update();
     }
 }
 
