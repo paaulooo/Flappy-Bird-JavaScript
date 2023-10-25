@@ -1,13 +1,13 @@
 console.log('Flappy Bird!');
 
+let frames = 0;
+
 const hitSound = new Audio();
 hitSound.src = './SFX/hit.wav';
 
 const jumpSound = new Audio();
 jumpSound.src = './SFX/jump.wav';
 
-const fallSound = new Audio();
-fallSound.src = '.SFX/falling.wav'
 
 const sprites = new Image();
 sprites.src = './sprites.png';
@@ -43,7 +43,7 @@ function createFlappy(){
             flappy.vel = - flappy.jumpforce
         },
         Update(){
-            if(docollision(flappy, ground)){
+            if(docollision(flappy, global.ground)){
                 console.log('COLLISION')
     
                 hitSound.play();
@@ -59,11 +59,25 @@ function createFlappy(){
             
             
         },
-        
+        animFrames: [
+            { SpriteX: 0, SpriteY: 0, },
+            { SpriteX: 0, SpriteY: 26, },
+            { SpriteX: 0, SpriteY: 52, },
+        ],
+        frame: 0,
+        updateFrame(){
+            console.log(frames)
+            const base = 1;
+            const increment = base + flappy.frame;
+            const baserepeat = flappy.animFrames.length;
+            flappy.frame = increment % baserepeat;
+        },
         Draw() {
+            flappy.updateFrame()
+            const { SpriteX, SpriteY } = flappy.animFrames[0];
             context.drawImage(
                 sprites,
-                flappy.SpriteX, flappy.SpriteY, 
+                SpriteX, SpriteY, 
                 flappy.Width, flappy.Height, 
                 flappy.X, flappy.Y, 
                 flappy.Width, flappy.Height    
@@ -74,32 +88,45 @@ function createFlappy(){
     return flappy
 }
 
+function createGround(){
+    const ground = {
+        SpriteX: 0,
+        SpriteY: 610,
+        Width: 224,
+        Height: 112,
+        X: 0,
+        Y: canvas.height - 112,
+        Update(){
+            const repeatGround = ground.Width / 2;
+            
+            if (ground.X <=- repeatGround){
+                return ground.X = 0;
+            }
+            ground.X = ground.X - 1;
 
-const ground = {
-    SpriteX: 0,
-    SpriteY: 610,
-    Width: 224,
-    Height: 112,
-    X: 0,
-    Y: canvas.height - 112,
-    Draw() {
-        context.drawImage(
+        },
+        Draw() {
+            context.drawImage(
+                sprites,
+                ground.SpriteX, ground.SpriteY, 
+                ground.Width, ground.Height, 
+                ground.X, ground.Y, 
+                ground.Width, ground.Height    
+           );
+           context.drawImage(
             sprites,
             ground.SpriteX, ground.SpriteY, 
             ground.Width, ground.Height, 
-            ground.X, ground.Y, 
+            (ground.X + ground.Width), ground.Y, 
             ground.Width, ground.Height    
        );
-       context.drawImage(
-        sprites,
-        ground.SpriteX, ground.SpriteY, 
-        ground.Width, ground.Height, 
-        (ground.X + ground.Width), ground.Y, 
-        ground.Width, ground.Height    
-   );
-
+    
+        }
     }
+    return ground;
 }
+
+
 
 const startScreen = {
     SpriteX: 134,
@@ -161,10 +188,11 @@ const screens = {
     start: {
         starting(){
             global.flappy = createFlappy();
+            global.ground = createGround();
         },
         Draw(){
             background.Draw();
-            ground.Draw();
+            global.ground.Draw();
             global.flappy.Draw();
             startScreen.Draw();
         },
@@ -172,14 +200,14 @@ const screens = {
             screenChanger(screens.game)
         },
         Update(){
-
+            global.ground.Update()
         }
     }
 };
 screens.game = {
     Draw(){
         background.Draw();
-        ground.Draw();
+        global.ground.Draw();
         global.flappy.Draw();
     },
     click(){
@@ -187,6 +215,7 @@ screens.game = {
     },
     Update(){
         global.flappy.Update();
+        global.ground.Update();
     }
 }
 
@@ -195,6 +224,7 @@ function loop(){
     activeScreen.Draw()
     activeScreen.Update()
     
+    frames = frames + 1;
     requestAnimationFrame(loop);
 }
 
