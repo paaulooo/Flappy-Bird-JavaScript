@@ -63,18 +63,25 @@ function createFlappy(){
             { SpriteX: 0, SpriteY: 0, },
             { SpriteX: 0, SpriteY: 26, },
             { SpriteX: 0, SpriteY: 52, },
+            { SpriteX: 0, SpriteY: 26, },
         ],
         frame: 0,
         updateFrame(){
-            console.log(frames)
-            const base = 1;
-            const increment = base + flappy.frame;
-            const baserepeat = flappy.animFrames.length;
-            flappy.frame = increment % baserepeat;
+            const frameInterval = 10;
+            const passInterval = frames % frameInterval === 0;
+
+            if(passInterval){
+                const base = 1;
+                const increment = base + flappy.frame;
+                const baserepeat = flappy.animFrames.length;
+                flappy.frame = increment % baserepeat;
+
+            }
+
         },
         Draw() {
             flappy.updateFrame()
-            const { SpriteX, SpriteY } = flappy.animFrames[0];
+            const { SpriteX, SpriteY } = flappy.animFrames[flappy.frame];
             context.drawImage(
                 sprites,
                 SpriteX, SpriteY, 
