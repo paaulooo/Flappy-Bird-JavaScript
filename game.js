@@ -133,7 +133,106 @@ function createGround(){
     return ground;
 }
 
+function createTubes(){
+    const tubes = {
+        Width: 52,
+        Height: 400,
+        ground: {
+            SpriteX: 0,
+            SpriteY: 169,
+        },
+        sky: {
+            SpriteX: 52,
+            SpriteY: 169,
+        },
+        space: 80,
+        Draw(){
+            tubes.doubles.forEach(function(double) {
 
+                const spaceBetween = 100;
+                const yRandom = double.Y;
+
+                const skyTubeX = double.X;
+                const skyTubeY = yRandom;
+    
+                context.drawImage(
+    
+                    sprites,
+                    tubes.sky.SpriteX, tubes.sky.SpriteY, 
+                    tubes.Width, tubes.Height, 
+                    skyTubeX, skyTubeY, 
+                    tubes.Width, tubes.Height 
+    
+                )
+    
+                const groundTubeX = double.X;
+                const groundTubeY = tubes.Height + spaceBetween  + yRandom;
+                context.drawImage(
+                    sprites,
+                    tubes.ground.SpriteX, tubes.ground.SpriteY, 
+                    tubes.Width, tubes.Height, 
+                    groundTubeX, groundTubeY, 
+                    tubes.Width, tubes.Height,
+                )
+                double.skyTube = {
+                    X: skyTubeX,
+                    Y: tubes.Height + skyTubeY
+                }
+                double.groundTube = {
+                    X: groundTubeX,
+                    Y: groundTubeY
+                };
+            })
+
+        },
+
+        hasCollision(double){
+            const hFlappy = global.flappy.Y;
+            const fFlappy = global.flappy.Y + global.flappy.Height;
+
+            if((global.flappy.X + global.flappy.Width) >= double.X) {
+
+                if(hFlappy <= double.skyTube.Y){
+                    return true;
+                }
+
+                if(fFlappy >= double.groundTube.Y){
+                    return true;
+                }
+
+            }
+
+
+            return false;
+        },
+        doubles: [],
+        Update(){
+
+            const pass100frames = frames % 100 === 0;
+            if(pass100frames) { 
+                tubes.doubles.push({
+                    X: canvas.width,
+                    Y: -150 * (Math.random() + 1),
+                })
+            }
+            tubes.doubles.forEach(function(double){
+                double.X = double.X - 2;
+
+                if(tubes.hasCollision(double)){
+                    
+                    hitSound.play();
+                    screenChanger(screens.start)
+                }
+
+                if(double.x + tubes.Width <= 0) { 
+                    tubes.doubles.shift();
+                }
+            })
+        }
+    }
+
+    return tubes
+}
 
 const startScreen = {
     SpriteX: 134,
@@ -196,9 +295,11 @@ const screens = {
         starting(){
             global.flappy = createFlappy();
             global.ground = createGround();
+            global.tubes = createTubes();
         },
         Draw(){
             background.Draw();
+            global.tubes.Draw();
             global.ground.Draw();
             global.flappy.Draw();
             startScreen.Draw();
@@ -214,15 +315,17 @@ const screens = {
 screens.game = {
     Draw(){
         background.Draw();
-        global.ground.Draw();
         global.flappy.Draw();
+        global.tubes.Draw();
+        global.ground.Draw();
     },
     click(){
         global.flappy.jump()
     },
     Update(){
-        global.flappy.Update();
+        global.tubes.Update();
         global.ground.Update();
+        global.flappy.Update();
     }
 }
 
