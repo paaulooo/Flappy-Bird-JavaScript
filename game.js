@@ -36,7 +36,7 @@ function createFlappy(){
         Y: 50,
         vel: 0,
         gravity: 0.2,
-        jumpforce: 5.3,
+        jumpforce: 4.3,
         jump(){
             console.log('jump')
             jumpSound.play()
@@ -149,8 +149,8 @@ function createTubes(){
         Draw(){
             tubes.doubles.forEach(function(double) {
 
-                const spaceBetween = 100;
                 const yRandom = double.Y;
+                const spaceBetween = 90;
 
                 const skyTubeX = double.X;
                 const skyTubeY = yRandom;
@@ -166,7 +166,7 @@ function createTubes(){
                 )
     
                 const groundTubeX = double.X;
-                const groundTubeY = tubes.Height + spaceBetween  + yRandom;
+                const groundTubeY = tubes.Height + spaceBetween + yRandom;
                 context.drawImage(
                     sprites,
                     tubes.ground.SpriteX, tubes.ground.SpriteY, 
@@ -188,22 +188,20 @@ function createTubes(){
 
         hasCollision(double){
             const hFlappy = global.flappy.Y;
-            const fFlappy = global.flappy.Y + global.flappy.Height;
+            const pFlappy = global.flappy.Y + global.flappy.Height;
 
             if((global.flappy.X + global.flappy.Width) >= double.X) {
-
+                console.log('bateu')
                 if(hFlappy <= double.skyTube.Y){
                     return true;
                 }
 
-                if(fFlappy >= double.groundTube.Y){
+                if(pFlappy >= double.groundTube.Y){
                     return true;
                 }
-
             }
-
-
             return false;
+            
         },
         doubles: [],
         Update(){
@@ -215,6 +213,7 @@ function createTubes(){
                     Y: -150 * (Math.random() + 1),
                 })
             }
+            
             tubes.doubles.forEach(function(double){
                 double.X = double.X - 2;
 
@@ -227,11 +226,11 @@ function createTubes(){
                 if(double.x + tubes.Width <= 0) { 
                     tubes.doubles.shift();
                 }
-            })
+            });
         }
     }
 
-    return tubes
+    return tubes;
 }
 
 const startScreen = {
@@ -315,9 +314,9 @@ const screens = {
 screens.game = {
     Draw(){
         background.Draw();
-        global.flappy.Draw();
         global.tubes.Draw();
         global.ground.Draw();
+        global.flappy.Draw();
     },
     click(){
         global.flappy.jump()
