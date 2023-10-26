@@ -35,8 +35,8 @@ function createFlappy(){
         X: 10,
         Y: 50,
         vel: 0,
-        gravity: 0.1,
-        jumpforce: 4.3,
+        gravity: 0.099,
+        jumpforce: 3.4,
         jump(){
             console.log('jump')
             jumpSound.play()
