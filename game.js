@@ -35,7 +35,7 @@ function createFlappy(){
         X: 10,
         Y: 50,
         vel: 0,
-        gravity: 0.2,
+        gravity: 0.1,
         jumpforce: 4.3,
         jump(){
             console.log('jump')
