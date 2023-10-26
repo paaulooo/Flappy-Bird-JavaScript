@@ -1,7 +1,7 @@
 console.log('Flappy Bird!');
 
 let frames = 0;
-
+var pt = 0;
 const hitSound = new Audio();
 hitSound.src = './SFX/hit.wav';
 
@@ -47,10 +47,8 @@ function createFlappy(){
                 console.log('COLLISION')
     
                 hitSound.play();
-                setTimeout(() => {
-                    
-                    screenChanger(screens.start)
-                }, 340)
+
+                screenChanger(screens.Over)
     
                 return
             }
@@ -189,25 +187,34 @@ function createTubes(){
         hasCollision(double){
             const hFlappy = global.flappy.Y;
             const pFlappy = global.flappy.Y + global.flappy.Height;
-
+            
             if((global.flappy.X + global.flappy.Width) >= double.X) {
-                console.log('bateu')
+
+                console.log('bateu' + pt)
                 if(hFlappy <= double.skyTube.Y){
+                    console.log('a')
                     return true;
                 }
 
                 if(pFlappy >= double.groundTube.Y){
+                    console.log('b')
                     return true;
                 }
             }
-            return false;
+            
+            return false
+            
             
         },
+        
+        
+
+        
         doubles: [],
         Update(){
 
-            const pass100frames = frames % 100 === 0;
-            if(pass100frames) { 
+            const pass100Frames = frames % 100 === 0;
+            if(pass100Frames) { 
                 tubes.doubles.push({
                     X: canvas.width,
                     Y: -150 * (Math.random() + 1),
@@ -220,10 +227,10 @@ function createTubes(){
                 if(tubes.hasCollision(double)){
                     
                     hitSound.play();
-                    screenChanger(screens.start)
+                    screenChanger(screens.Over)
                 }
 
-                if(double.x + tubes.Width <= 0) { 
+                if(double.X + tubes.Width <= 0) { 
                     tubes.doubles.shift();
                 }
             });
@@ -231,6 +238,27 @@ function createTubes(){
     }
 
     return tubes;
+}
+
+function createScore(){
+    const score = {
+        pts: 0,
+        Draw() {
+            context.font = '35px "VT323"'
+            context.textAlign = 'right'
+            context.fillStyle = 'gold'
+            context.fillText(`${score.pts}`, canvas.width - 10, 35 )
+            
+        },
+        Update() {
+            const frameInterval = 22;
+            const passInterval = frames % frameInterval === 0;
+            if(passInterval){
+                score.pts = score.pts + 1
+            }
+        }
+    }
+    return score
 }
 
 const startScreen = {
@@ -247,6 +275,25 @@ const startScreen = {
             startScreen.Width, startScreen.Height, 
             startScreen.X, startScreen.Y, 
             startScreen.Width, startScreen.Height    
+       );
+
+    }
+}
+
+const overScreen = {
+    SpriteX: 134,
+    SpriteY: 153,
+    Width: 226,
+    Height: 200,
+    X: (canvas.width / 2) - 226 / 2,
+    Y: 50,
+    Draw() {
+        context.drawImage(
+            sprites,
+            overScreen.SpriteX, overScreen.SpriteY, 
+            overScreen.Width, overScreen.Height, 
+            overScreen.X, overScreen.Y, 
+            overScreen.Width, overScreen.Height    
        );
 
     }
@@ -312,11 +359,15 @@ const screens = {
     }
 };
 screens.game = {
+    starting(){
+        global.score = createScore()
+    },
     Draw(){
         background.Draw();
         global.tubes.Draw();
         global.ground.Draw();
         global.flappy.Draw();
+        global.score.Draw();
     },
     click(){
         global.flappy.jump()
@@ -325,6 +376,19 @@ screens.game = {
         global.tubes.Update();
         global.ground.Update();
         global.flappy.Update();
+        global.score.Update()
+    }
+}
+
+screens.Over = {
+    Draw(){
+        overScreen.Draw()
+    },
+    Update(){
+
+    },
+    click(){
+        screenChanger(screens.start)
     }
 }
 
