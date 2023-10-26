@@ -244,10 +244,10 @@ function createScore(){
     const score = {
         pts: 0,
         Draw() {
-            context.font = '35px "VT323"'
+            context.font = '30px "Press Start 2P"'
             context.textAlign = 'right'
-            context.fillStyle = 'gold'
-            context.fillText(`${score.pts}`, canvas.width - 10, 35 )
+            context.fillStyle = '#1e8000'
+            context.fillText(`${score.pts}`, canvas.width - 20, 45 )
             
         },
         Update() {
