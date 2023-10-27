@@ -319,7 +319,7 @@ const overScreen = {
   },
 };
 
-//Game Background
+//Game Background...
 
 const background = {
   SpriteX: 390,
