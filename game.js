@@ -209,7 +209,6 @@ function createTubes() {
       const pFlappy = global.flappy.Y + global.flappy.Height;
 
       if (global.flappy.X + global.flappy.Width >= double.X) {
-        console.log("bateu" + pt);
         if (hFlappy <= double.skyTube.Y) {
           console.log("a");
           return true;
